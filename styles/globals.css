@@ -15,21 +15,21 @@ body {
     font-family: 'IBMPlexSans';
     font-style: normal;
     font-weight: 500;
-    src: url(../public/fonts/IBMPlexSans-Regular.ttf) format('truetype');
+    src: url(/public/fonts/IBMPlexSans-Regular.ttf) format('truetype');
 }
 
 @font-face {
     font-family: 'IBMPlexSans';
     font-style: normal;
     font-weight: 600;
-    src: url(../public/fonts/IBMPlexSans-SemiBold.ttf) format('truetype');
+    src: url(/public/fonts/IBMPlexSans-SemiBold.ttf) format('truetype');
 }
 
 @font-face {
     font-family: 'IBMPlexSans';
     font-style: normal;
     font-weight: 700;
-    src: url(../public/fonts/IBMPlexSans-Bold.ttf) format('truetype');
+    src: url(/public/fonts/IBMPlexSans-Bold.ttf) format('truetype');
 }
 
 a {
