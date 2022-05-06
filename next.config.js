@@ -2,9 +2,10 @@
 const nextConfig = {
     reactStrictMode: true,
     images: {
-        domains: ["https://images.unsplash.com"]
+        domains: ['images.unsplash.com']
     }
-
 }
 
 module.exports = nextConfig;
+
+// single quotes has to be used else error
