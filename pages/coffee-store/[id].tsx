@@ -12,11 +12,16 @@ import {fetchCoffeeStores} from "../../lib/coffee-stores";
 
 type  CoffeeStore = {
     "id": number,
+    "geocodes": { main: object, roof: object },
+    "link": string,
     "name": string,
     "imgUrl": string,
-    "websiteUrl": string,
-    "address": string,
-    "neighbourhood": string
+    related_places: object,
+    "timezone": string,
+    location: {
+        address: string, country: string, cross_street: string, formatted_address: string, locality: any[], postcode: string, region: string,
+        "neighborhood": string[]
+    }
 };
 
 type Props = {
@@ -28,6 +33,7 @@ export const getStaticProps: GetStaticProps = async (staticProps) => {
     const params: Record<string, string | number> | any = staticProps.params;
     // @ts-ignore
     const coffeeStores: Array<unknown> = await fetchCoffeeStores() || [];
+    console.log('coffee::  ', coffeeStores);
     const findCoffeeStoreById = coffeeStores.find((coffeeStore) => {
         // @ts-ignore
         return coffeeStore.id.toString() === params.id; //dynamic id
@@ -44,7 +50,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
     const paths = coffeeStores.map((coffeeStore) => {
         return {
             params: {
-                id: coffeeStore.id.toString(),
+                id: coffeeStore.id,
             },
         };
     });
@@ -57,8 +63,8 @@ export const getStaticPaths: GetStaticPaths = async () => {
 const CoffeeStore: NextPage<Props> = (props: Props) => {
     const router = useRouter();
     const id = router.query.id;
-    console.group(`router`, id);
-    console.group("props", props)
+    console.group(`router`, id); // 51819802498ee3c6834b8e0b
+    console.group("props", JSON.stringify(props, null, 4))
     const [coffeeStore, setCoffeeStore] = useState(props.coffeeStore || {});
     // const {state: {coffeeStores}} = useContext(StoreContext);
 
@@ -67,7 +73,8 @@ const CoffeeStore: NextPage<Props> = (props: Props) => {
     }
 
     // it has to be router.isFallback since if it does fallback the props = {} so these props"ll be undefined
-    const {name, address, neighbourhood, imgUrl, websiteUrl} = props.coffeeStore;
+    const {name, location, timezone, imgUrl} = props.coffeeStore;
+    // console.log(`Neighbourhood:: `, location["neighborhood"][0]);
 
 
     const handleUpvote = () => {
@@ -89,17 +96,20 @@ const CoffeeStore: NextPage<Props> = (props: Props) => {
                     <div className={styles.nameWrapper}>
                         <h1 className={styles.name}>{name}</h1>
                     </div>
-                    <Image src={imgUrl || "https://images.unsplash.com/photo-1498804103079-a6351b050096?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2468&q=80"} className={styles.storeImg} alt={name} width={600} height={360}/>
+                    <Image
+                        src={imgUrl || "https://images.unsplash.com/photo-1498804103079-a6351b050096?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2468&q=80"}
+                        className={styles.storeImg} alt={name} width={600} height={360}/>
                 </div>
 
                 <div className={cls("glass", styles.col2)}>
                     <div className={styles.iconWrapper}>
                         <Image src="/static/icons/nearMe.svg" width="24" height="24"/>
-                        <p className={styles.text}>{address}</p>
+                        <p className={styles.text}>{location.formatted_address}</p>
                     </div>
                     <div className={styles.iconWrapper}>
                         <Image src="/static/icons/places.svg" width="24" height="24"/>
-                        <p className={styles.text}>{neighbourhood}</p>
+                        <p className={styles.text}>{location.neighborhood?.[0]}</p>
+
                     </div>
                     <div className={styles.iconWrapper}>
                         <Image src="/static/icons/star.svg" width="24" height="24"/>
