@@ -1,4 +1,4 @@
-import { NextPage } from "next";
+import type { NextPage } from "next";
 import styles from "./banner.module.css";
 
 type Props = {
@@ -7,6 +7,7 @@ type Props = {
 
 }
 
+// These React Component [called page by Next) must use default export
 const Banner: NextPage<Props> = ({buttonText, handleOnClick}: Props) => {
     return (
         <div className={styles.container}>
