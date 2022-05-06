@@ -5,6 +5,7 @@ import styles from '../styles/Home.module.css'
 import Banner from "../components/banner";
 import Image from "next/image";
 
+
 const Home: NextPage = () => {
     const handleOnBannerClick = useCallback(() => {
         console.log(`banner clicked`);
@@ -18,10 +19,11 @@ const Home: NextPage = () => {
             </Head>
 
             <main className={styles.main}>
-                <Banner buttonText="View The Nearby Stores" handleOnClick={handleOnBannerClick} />
+                <Banner buttonText="View The Nearby Stores" handleOnClick={handleOnBannerClick}/>
                 <div className={styles.heroImage}>
-                <Image src="/static/hero-image.png" width={700}  height={400} />
+                    <Image src="/static/hero-image.png" width={700} height={400}/>
                 </div>
+                <h2 className={styles.heading2}>Toronto Stores</h2>
             </main>
         </div>
     )
