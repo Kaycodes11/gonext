@@ -19,7 +19,9 @@ const Home: NextPage = () => {
 
             <main className={styles.main}>
                 <Banner buttonText="View The Nearby Stores" handleOnClick={handleOnBannerClick} />
+                <div className={styles.heroImage}>
                 <Image src="/static/hero-image.png" width={700}  height={400} />
+                </div>
             </main>
         </div>
     )
