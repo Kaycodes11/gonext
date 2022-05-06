@@ -6,7 +6,6 @@ import Link from "next/link";
 import Image from "next/image";
 import Head from "next/head";
 import styles from "../../styles/coffee-store.module.css";
-import {Property} from "csstype";
 
 
 type  CoffeeStore = {
@@ -21,8 +20,6 @@ type  CoffeeStore = {
 type Props = {
     coffeeStore: CoffeeStore;
 };
-
-
 
 
 export const getStaticProps: GetStaticProps = (staticProps) => {
@@ -53,26 +50,32 @@ export const getStaticPaths: GetStaticPaths = () => {
 const CoffeeStore: NextPage<Props> = (props: Props) => {
     const router = useRouter();
     console.group(`router`, router);
-    console.group( "props", props)
+    console.group("props", props)
 
     if (router.isFallback) {
         return <div>Loading....</div>;
     }
 
-    const { name, address, neighbourhood  } = props.coffeeStore;
+    // it has to be router.isFallback since if it does fallback the props = {} so these props"ll be undefined
+    const {name, address, neighbourhood, imgUrl, websiteUrl} = props.coffeeStore;
+
 
     return (
-        <div>
+        <div className={styles.layout}>
             <Head>
                 <title>{name}</title>
             </Head>
-            <Link href={"/"} scroll={false}>
-                <a>Back to home</a>
-            </Link>
-            <Link href={"/coffee-store/dynamic"} scroll={false}>
-                <a>Go to page dynamic</a>
-            </Link>
-            <h2>{address}</h2>
+            <div className={styles.col1}>
+                <Link href={"/"} scroll={false}>
+                    <a>Back to home</a>
+                </Link>
+                <p>{name}</p>
+                <Image src={imgUrl} className={styles.storeImg} alt={name} width={600} height={360} />
+            </div>
+            <div className={styles.col2}>
+                <p>{address}</p>
+                <p>{neighbourhood}</p>
+            </div>
         </div>
     );
 };
