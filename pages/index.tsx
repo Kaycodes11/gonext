@@ -3,6 +3,7 @@ import {useCallback} from "react";
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import Banner from "../components/banner";
+import Image from "next/image";
 
 const Home: NextPage = () => {
     const handleOnBannerClick = useCallback(() => {
@@ -18,6 +19,7 @@ const Home: NextPage = () => {
 
             <main className={styles.main}>
                 <Banner buttonText="View The Nearby Stores" handleOnClick={handleOnBannerClick} />
+                <Image src="/static/hero-image.png" width={700}  height={400} />
             </main>
         </div>
     )

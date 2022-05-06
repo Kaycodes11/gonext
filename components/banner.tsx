@@ -14,8 +14,10 @@ const Banner: NextPage<Props> = ({buttonText, handleOnClick}: Props) => {
             <h1 className={styles.title}>
                 <span className={styles.title1}>Coffee</span>
                 <span className={styles.title2}>Finder</span></h1>
-            <p className={styles.subTitle}>Discover the local coffee shops!</p>
+            <p className={styles.subTitle}>Discover local coffee shops!</p>
+            <div className={styles.buttonWrapper}>
             <button className={styles.button} type="button" onClick={handleOnClick}>{buttonText}</button>
+            </div>
         </div>
     )
 }
