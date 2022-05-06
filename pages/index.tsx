@@ -6,22 +6,18 @@ import card from "../components/card";
 import Banner from "../components/banner";
 import Image from "next/image";
 import Card from "../components/card";
+import {fetchCoffeeStores} from "../lib/coffee-stores";
 
 const getStaticProps: GetStaticProps = async (context) => {
-    console.log(`Hi getStaticProps from starting component`);
-    let coffeeStoreData: any[] = [];
-    const response = await fetch(`https://api.foursquare.com/v2/venues/search?ll=43.65267326999575,-79.39545615725015&query=coffee stores&client_id=EZOA4G1YNDLOKTASDSUGWLNGFOFFIEDVQ3B3FCFUIROZI31P&client_secret=SU4LIOGZG1PEDSJ43I5DJ2V3RRHDH0VHO3VPX3XCJX1W0YLX&v=20220506`);
-    const data = await response.json();
+    const coffeeStores = await fetchCoffeeStores();
     return {
-        props: {
-            coffeeStores: data?.response.venues
-        }
+        props: {coffeeStores}
     }
 };
 
+const Home: NextPage = ({coffeeStores = []}: Record<string, any>) => {
+    console.log(`coffeeStores`, coffeeStores);
 
-const Home: NextPage = (props: Record<string, any>) => {
-    console.log("props: ", props);
     const handleOnBannerClick = useCallback(() => {
         console.log(`banner clicked`);
     }, [])
@@ -39,11 +35,11 @@ const Home: NextPage = (props: Record<string, any>) => {
                     <Image src="/static/hero-image.png" width={700} height={400}/>
                 </div>
                 <h2 className={styles.heading2}>Toronto Stores</h2>
-                {props.coffeeStores.length > 0 && (
+                {coffeeStores.length > 0 && (
                     <>
                         <h2 className={styles.heading2}>Toronto Stores</h2>
                         <div className={styles.cardLayout}>
-                            {props.coffeeStores.map((coffeeStore: Record<string, any>) => {
+                            {coffeeStores.map((coffeeStore: Record<string, any>) => {
                                 return (
                                     <Card
                                         key={coffeeStore.id}

@@ -7,6 +7,7 @@ import Image from "next/image";
 import Head from "next/head";
 import styles from "../../styles/coffee-store.module.css";
 import cls from "classnames";
+import {fetchCoffeeStores} from "../../lib/coffee-stores";
 
 
 type  CoffeeStore = {
@@ -23,19 +24,24 @@ type Props = {
 };
 
 
-export const getStaticProps: GetStaticProps = (staticProps) => {
-    const params = staticProps.params;
-    console.log(`params_here: `, params);
+export const getStaticProps: GetStaticProps = async (staticProps) => {
+    const params: Record<string, string | number> | any = staticProps.params;
+    // @ts-ignore
+    const coffeeStores: Array<unknown> = await fetchCoffeeStores() || [];
+    const findCoffeeStoreById = coffeeStores.find((coffeeStore) => {
+        // @ts-ignore
+        return coffeeStore.id.toString() === params.id; //dynamic id
+    });
     return {
         props: {
-            coffeeStore: coffeeStoresData.find(coffeeStore => {
-                return coffeeStore.id.toString() === params?.id
-            })
-        }
-    }
+            coffeeStore: findCoffeeStoreById ? findCoffeeStoreById : {},
+        },
+    };
 }
-export const getStaticPaths: GetStaticPaths = () => {
-    const paths = coffeeStoresData.map((coffeeStore) => {
+export const getStaticPaths: GetStaticPaths = async () => {
+    const coffeeStores = await fetchCoffeeStores() || [];
+    // @ts-ignore
+    const paths = coffeeStores.map((coffeeStore) => {
         return {
             params: {
                 id: coffeeStore.id.toString(),
@@ -50,8 +56,11 @@ export const getStaticPaths: GetStaticPaths = () => {
 
 const CoffeeStore: NextPage<Props> = (props: Props) => {
     const router = useRouter();
-    console.group(`router`, router);
+    const id = router.query.id;
+    console.group(`router`, id);
     console.group("props", props)
+    const [coffeeStore, setCoffeeStore] = useState(props.coffeeStore || {});
+    // const {state: {coffeeStores}} = useContext(StoreContext);
 
     if (router.isFallback) {
         return <div>Loading....</div>;
@@ -80,23 +89,23 @@ const CoffeeStore: NextPage<Props> = (props: Props) => {
                     <div className={styles.nameWrapper}>
                         <h1 className={styles.name}>{name}</h1>
                     </div>
-                    <Image src={imgUrl} className={styles.storeImg} alt={name} width={600} height={360}/>
+                    <Image src={imgUrl || "https://images.unsplash.com/photo-1498804103079-a6351b050096?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2468&q=80"} className={styles.storeImg} alt={name} width={600} height={360}/>
                 </div>
 
                 <div className={cls("glass", styles.col2)}>
                     <div className={styles.iconWrapper}>
-                        <Image src="/static/icons/nearMe.svg" width="24" height="24" />
+                        <Image src="/static/icons/nearMe.svg" width="24" height="24"/>
                         <p className={styles.text}>{address}</p>
                     </div>
                     <div className={styles.iconWrapper}>
-                        <Image src="/static/icons/places.svg" width="24" height="24" />
+                        <Image src="/static/icons/places.svg" width="24" height="24"/>
                         <p className={styles.text}>{neighbourhood}</p>
                     </div>
                     <div className={styles.iconWrapper}>
-                        <Image src="/static/icons/star.svg" width="24" height="24" />
+                        <Image src="/static/icons/star.svg" width="24" height="24"/>
                         <p className={styles.text}>1</p>
                     </div>
-                    <button className={styles.upvoteButton} onClick={handleUpvote} >Upvote</button>
+                    <button className={styles.upvoteButton} onClick={handleUpvote}>Upvote</button>
                 </div>
             </div>
         </div>
