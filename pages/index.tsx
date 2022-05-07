@@ -1,4 +1,4 @@
-import type {GetStaticProps, NextPage} from 'next'
+import type { NextPage } from 'next'
 import {useCallback, useEffect, useState} from "react";
 import Head from 'next/head'
 import Card from "../components/card";
@@ -9,7 +9,7 @@ import {fetchCoffeeStores} from "../lib/coffee-stores";
 import useTrackLocation from "../hooks/use-track-location";
 
 
-export async function getStaticProps(context: unknown ): Promise<{ props: { coffeeStores: unknown } }> {
+export async function getStaticProps(context: unknown): Promise<{ props: { coffeeStores: unknown } }> {
     const coffeeStores = await fetchCoffeeStores();
     return {
         props: {
@@ -19,15 +19,27 @@ export async function getStaticProps(context: unknown ): Promise<{ props: { coff
 }
 
 const Home: NextPage = (props: any) => {
-    console.log(`PROPS:: `, props);
-    const { handleTrackLocation, locationErrorMsg, latLong } = useTrackLocation();
+    console.log(`PROPS:: `, props, process.env.NEXT_PUBLIC_access_key);
+
+    const {handleTrackLocation, locationErrorMsg, latLong, isFindingLocation} = useTrackLocation();
+    const [coffeeStores, setCoffeeStores] = useState('');
     const [coffeeStoresError, setCoffeeStoresError] = useState(null);
     // const { dispatch, state } = useContext(StoreContext);
     // const { coffeeStores, latLong } = state;
 
-    // useEffect(() => {}, [])
+    useEffect(() => {
+        if (latLong) {
+            try {
+                const fetchedCoffeeStores = async () => fetchCoffeeStores(latLong, 18).then(resp => resp);
+                console.log('saved: ', fetchedCoffeeStores);
+            } catch (error: any) {
+                setCoffeeStoresError(error.message);
+            }
+        }
+    }, [latLong]);
 
     const handleOnBannerClick = useCallback(() => {
+        console.log(`banner button`);
         handleTrackLocation();
     }, [])
     return (
@@ -43,7 +55,9 @@ const Home: NextPage = (props: any) => {
             </Head>
 
             <main className={styles.main}>
-                <Banner buttonText="View The Nearby Stores" handleOnClick={handleOnBannerClick}/>
+                <Banner buttonText={isFindingLocation ? "Locating...." : "View The Nearby Stores"}
+                        handleOnClick={handleOnBannerClick}/>
+
                 {locationErrorMsg && <p>Something went wrong: {locationErrorMsg}</p>}
                 {coffeeStoresError && <p>Something went wrong: {coffeeStoresError}</p>}
 
