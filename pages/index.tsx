@@ -1,12 +1,13 @@
 import type {GetStaticProps, NextPage} from 'next'
-import {useCallback} from "react";
+import {useCallback, useEffect, useState} from "react";
 import Head from 'next/head'
-import styles from '../styles/Home.module.css'
-import card from "../components/card";
+import Card from "../components/card";
 import Banner from "../components/banner";
 import Image from "next/image";
-import Card from "../components/card";
+import styles from '../styles/Home.module.css'
 import {fetchCoffeeStores} from "../lib/coffee-stores";
+import useTrackLocation from "../hooks/use-track-location";
+
 
 const getStaticProps: GetStaticProps = async (context) => {
     const coffeeStores = await fetchCoffeeStores();
@@ -17,9 +18,15 @@ const getStaticProps: GetStaticProps = async (context) => {
 
 const Home: NextPage = (props: any) => {
     console.log(`PROPS:: `, props);
+    const { handleTrackLocation, locationErrorMsg, latLong } = useTrackLocation();
+    const [coffeeStoresError, setCoffeeStoresError] = useState(null);
+    // const { dispatch, state } = useContext(StoreContext);
+    // const { coffeeStores, latLong } = state;
+
+    // useEffect(() => {}, [])
 
     const handleOnBannerClick = useCallback(() => {
-        console.log(`banner clicked`);
+        handleTrackLocation();
     }, [])
     return (
         <div className={styles.container}>
@@ -27,14 +34,21 @@ const Home: NextPage = (props: any) => {
                 <title>Coffee Finder</title>
                 <meta name="description" content="Find coffee stores nearby"/>
                 <link rel="icon" href="/favicon.ico"/>
+                <meta
+                    name="description"
+                    content="allows you to discover coffee stores"
+                ></meta>
             </Head>
 
             <main className={styles.main}>
                 <Banner buttonText="View The Nearby Stores" handleOnClick={handleOnBannerClick}/>
+                {locationErrorMsg && <p>Something went wrong: {locationErrorMsg}</p>}
+                {coffeeStoresError && <p>Something went wrong: {coffeeStoresError}</p>}
+
                 <div className={styles.heroImage}>
-                    <Image src="/static/hero-image.png" width={700} height={400}/>
+                    <Image src="/static/hero-image.png" width={700} height={400} alt={"hero image"}/>
                 </div>
-                <h2 className={styles.heading2}>Toronto Stores</h2>
+                {/*<h2 className={styles.heading2}>Toronto Stores</h2>*/}
                 {props?.coffeeStores?.length > 0 && (
                     <div className={styles.sectionWrapper}>
                         <h2 className={styles.heading2}>Stores near me</h2>
