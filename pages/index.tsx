@@ -9,12 +9,14 @@ import {fetchCoffeeStores} from "../lib/coffee-stores";
 import useTrackLocation from "../hooks/use-track-location";
 
 
-const getStaticProps: GetStaticProps = async (context) => {
+export async function getStaticProps(context: unknown ): Promise<{ props: { coffeeStores: unknown } }> {
     const coffeeStores = await fetchCoffeeStores();
     return {
-        props: {coffeeStores: coffeeStores ?? []}
-    }
-};
+        props: {
+            coffeeStores,
+        }, // will be passed to the page component as props
+    };
+}
 
 const Home: NextPage = (props: any) => {
     console.log(`PROPS:: `, props);
